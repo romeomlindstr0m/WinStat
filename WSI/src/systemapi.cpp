@@ -10,6 +10,8 @@ int queryProcessorDetails(ProcessorDetails& processor_details) {
 	WMIQueryManager wmi_query_manager;
 	int wmi_res = SUCCESS;
 
+	bool partial_data = false;
+
 	wmi_res = wmi_query_manager.setWMIClass(L"SELECT Manufacturer, Architecture, NumberOfCores, ThreadCount FROM Win32_Processor");
 
 	if (wmi_res != SUCCESS) {
@@ -18,77 +20,102 @@ int queryProcessorDetails(ProcessorDetails& processor_details) {
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Manufacturer");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			processor_details.vendor = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		processor_details.vendor = std::get<std::wstring>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		processor_details.vendor = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Architecture");
 
 	if (wmi_res != SUCCESS) {
-		return wmi_res;
+		/*
+		The Architecture property is documented as uint16(VT_UI2),
+		But WMI returns the property as int32 (VT_I4).
+		*/
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<int64_t>(stored_property)) {
+			processor_details.architecture = std::get<int64_t>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	/*
-	The Architecture property is documented as uint16(VT_UI2),
-	But WMI returns the property as int32 (VT_I4).
-	*/
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<int64_t>(stored_property)) {
-		processor_details.architecture = std::get<int64_t>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		processor_details.architecture = 0;
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"NumberOfCores");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		/*
+		The NumberOfCores property is documented as uint32(VT_UI4),
+		But WMI returns the property as int32 (VT_I4).
+		*/
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<int64_t>(stored_property)) {
+			processor_details.core_count = std::get<int64_t>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	/*
-	The NumberOfCores property is documented as uint32(VT_UI4),
-	But WMI returns the property as int32 (VT_I4).
-	*/
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<int64_t>(stored_property)) {
-		processor_details.core_count = std::get<int64_t>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		processor_details.core_count = 0;
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"ThreadCount");
 
-	if (wmi_res != SUCCESS) {
+	if (wmi_res == SUCCESS) {
+		/*
+		The ThreadCount property is documented as uint32(VT_UI4),
+		But WMI returns the property as int32 (VT_I4).
+		*/
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<int64_t>(stored_property)) {
+			processor_details.thread_count = std::get<int64_t>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
+	}
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		processor_details.thread_count = 0;
+		partial_data = true;
+	}
+	else {
 		return wmi_res;
 	}
 
-	/*
-	The ThreadCount property is documented as uint32(VT_UI4),
-	But WMI returns the property as int32 (VT_I4).
-	*/
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<int64_t>(stored_property)) {
-		processor_details.thread_count = std::get<int64_t>(stored_property);
+	if (partial_data) {
+		return WARNING_WMI_PARTIAL_DATA;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return SUCCESS;
 	}
-
-	return SUCCESS;
 }
 
 int queryUserName(std::wstring& user_name) {
@@ -122,6 +149,8 @@ int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system
 	WMIQueryManager wmi_query_manager;
 	int wmi_res = SUCCESS;
 
+	bool partial_data = false;
+
 	wmi_res = wmi_query_manager.setWMIClass(L"SELECT Caption, Version, BuildNumber, OSArchitecture, Locale FROM Win32_OperatingSystem");
 
 	if (wmi_res != SUCCESS) {
@@ -130,112 +159,149 @@ int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Caption");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			operating_system_details.caption = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		operating_system_details.caption = std::get<std::wstring>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.caption = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Caption");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
-	}
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
 
-	stored_property = wmi_query_manager.getStoredProperty();
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			std::wstring caption_buffer = std::get<std::wstring>(stored_property);
 
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		std::wstring caption_buffer = std::get<std::wstring>(stored_property);
-
-		for (int i = caption_buffer.length() - 1; i >= 0; i--) {
-			if (caption_buffer[i] == L' ') {
-				caption_buffer.erase(i);
+			for (int i = caption_buffer.length() - 1; i >= 0; i--) {
+				if (caption_buffer[i] == L' ') {
+					caption_buffer.erase(i);
+				}
+				else {
+					break;
+				}
 			}
-			else {
-				break;
-			}
+
+			operating_system_details.caption = caption_buffer;
 		}
-
-		operating_system_details.caption = caption_buffer;
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
+	}
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.caption = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Version");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			operating_system_details.version = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		operating_system_details.version = std::get<std::wstring>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.version = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"BuildNumber");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			operating_system_details.build_number = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		operating_system_details.build_number = std::get<std::wstring>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.build_number = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"OSArchitecture");
 
-	if (wmi_res != SUCCESS) {
-		return wmi_res;
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			operating_system_details.architecture = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
 	}
-
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		operating_system_details.architecture = std::get<std::wstring>(stored_property);
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.architecture = L"";
+		partial_data = true;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return wmi_res;
 	}
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Locale");
 
-	if (wmi_res != SUCCESS) {
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			operating_system_details.language = std::get<std::wstring>(stored_property);
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
+	}
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		operating_system_details.language = L"";
+		partial_data = true;
+	}
+	else {
 		return wmi_res;
 	}
 
-	stored_property = wmi_query_manager.getStoredProperty();
-
-	if (std::holds_alternative<std::wstring>(stored_property)) {
-		operating_system_details.language = std::get<std::wstring>(stored_property);
+	if (partial_data) {
+		return WARNING_WMI_PARTIAL_DATA;
 	}
 	else {
-		return ERROR_UNEXPECTED_VARIANT_TYPE;
+		return SUCCESS;
 	}
-
-	return SUCCESS;
 }
 
 int queryDiskDetails(std::vector<DiskDetails>& disk_details) {
 	std::variant<std::wstring, int64_t, uint64_t, bool> stored_property;
 	WMIQueryManager wmi_query_manager;
 	int wmi_res = SUCCESS;
+
+	bool partial_data = false;
 
 	wmi_res = wmi_query_manager.setWMIClass(L"SELECT Model, SerialNumber, Size, MediaType, Status FROM Win32_DiskDrive");
 
@@ -248,86 +314,116 @@ int queryDiskDetails(std::vector<DiskDetails>& disk_details) {
 
 		wmi_res = wmi_query_manager.queryWMIProperty(L"Model");
 
-		if (wmi_res != SUCCESS) {
-			return wmi_res;
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				disk.model = std::get<std::wstring>(stored_property);
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
 		}
-
-		stored_property = wmi_query_manager.getStoredProperty();
-
-		if (std::holds_alternative<std::wstring>(stored_property)) {
-			disk.model = std::get<std::wstring>(stored_property);
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			disk.model = L"";
+			partial_data = true;
 		}
 		else {
-			return ERROR_UNEXPECTED_VARIANT_TYPE;
+			return wmi_res;
 		}
 
 		wmi_res = wmi_query_manager.queryWMIProperty(L"SerialNumber");
 
-		if (wmi_res != SUCCESS) {
-			return wmi_res;
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				disk.serial_number = std::get<std::wstring>(stored_property);
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
 		}
-
-		stored_property = wmi_query_manager.getStoredProperty();
-
-		if (std::holds_alternative<std::wstring>(stored_property)) {
-			disk.serial_number = std::get<std::wstring>(stored_property);
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			disk.serial_number = L"";
+			partial_data = true;
 		}
 		else {
-			return ERROR_UNEXPECTED_VARIANT_TYPE;
+			return wmi_res;
 		}
 
 		wmi_res = wmi_query_manager.queryWMIProperty(L"Size");
 
-		if (wmi_res != SUCCESS) {
-			return wmi_res;
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			/*
+			The Size property is documented as uint64(VT_UI8),
+			But WMI returns the property as BSTR (VT_BSTR).
+			*/
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				disk.size = std::get<std::wstring>(stored_property);
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
 		}
-
-		stored_property = wmi_query_manager.getStoredProperty();
-
-		/*
-		The Size property is documented as uint64(VT_UI8),
-		But WMI returns the property as BSTR (VT_BSTR).
-		*/
-		if (std::holds_alternative<std::wstring>(stored_property)) {
-			disk.size = std::get<std::wstring>(stored_property);
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			disk.size = L"";
+			partial_data = true;
 		}
 		else {
-			return ERROR_UNEXPECTED_VARIANT_TYPE;
+			return wmi_res;
 		}
 
 		wmi_res = wmi_query_manager.queryWMIProperty(L"MediaType");
 
-		if (wmi_res != SUCCESS) {
-			return wmi_res;
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				disk.media_type = std::get<std::wstring>(stored_property);
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
 		}
-
-		stored_property = wmi_query_manager.getStoredProperty();
-
-		if (std::holds_alternative<std::wstring>(stored_property)) {
-			disk.media_type = std::get<std::wstring>(stored_property);
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			disk.media_type = L"";
+			partial_data = true;
 		}
 		else {
-			return ERROR_UNEXPECTED_VARIANT_TYPE;
+			return wmi_res;
 		}
 
 		wmi_res = wmi_query_manager.queryWMIProperty(L"Status");
 
-		if (wmi_res != SUCCESS) {
-			return wmi_res;
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				disk.status = std::get<std::wstring>(stored_property);
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
 		}
-
-		stored_property = wmi_query_manager.getStoredProperty();
-
-		if (std::holds_alternative<std::wstring>(stored_property)) {
-			disk.status = std::get<std::wstring>(stored_property);
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			disk.status = L"";
+			partial_data = true;
 		}
 		else {
-			return ERROR_UNEXPECTED_VARIANT_TYPE;
+			return wmi_res;
 		}
 
 		disk_details.push_back(disk);
 
 	} while (wmi_query_manager.nextWMIObject() == SUCCESS);
 
-	return SUCCESS;
+	if (partial_data) {
+		return WARNING_WMI_PARTIAL_DATA;
+	}
+	else {
+		return SUCCESS;
+	}
 }

@@ -24,12 +24,18 @@
     <ClInclude Include="include\wsi\wmiapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\wsi\gpuapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wmiapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\systemapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gpuapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
