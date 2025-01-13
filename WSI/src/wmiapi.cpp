@@ -139,6 +139,9 @@ public:
 		case VT_BOOL:
 			wmi_property_.emplace<bool>(property_variant.boolVal == VARIANT_TRUE);
 			break;
+		case VT_NULL:
+			return WARNING_WMI_PARTIAL_DATA;
+			break;
 		default:
 			return ERROR_WMI_PROPERTY_TYPE_NOT_SUPPORTED;
 			break;
