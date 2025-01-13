@@ -39,3 +39,4 @@ constexpr int ERROR_UNEXPECTED_VARIANT_TYPE = 1110; // A WMI query returned a da
 
 // Warning codes are defined within a range of 10000-20000.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
+constexpr int WARNING_WMI_PARTIAL_DATA = 10010; // A WMI query returned partial data, some properties may be missing.
