@@ -288,6 +288,87 @@ int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system
 		return wmi_res;
 	}
 
+	wmi_res = wmi_query_manager.setWMIClass(L"SELECT ApplicationID, PartialProductKey, LicenseStatus, Description FROM SoftwareLicensingProduct WHERE PartialProductKey IS NOT NULL AND Description LIKE 'Windows%Operating%System%'");
+
+	if (wmi_res != SUCCESS) {
+		return wmi_res;
+	}
+
+	bool os_license = false;
+
+	do {
+		wmi_res = wmi_query_manager.queryWMIProperty(L"ApplicationID");
+
+		if (wmi_res == SUCCESS) {
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<std::wstring>(stored_property)) {
+				if (std::get<std::wstring>(stored_property) != L"55c92734-d682-4d71-983e-d6ec3f16059f") {
+					continue;
+				}
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
+		}
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			operating_system_details.activation_status = ActivationStatus::UNAVAILABLE;
+			partial_data = true;
+			break;
+		}
+		else {
+			return wmi_res;
+		}
+
+		wmi_res = wmi_query_manager.queryWMIProperty(L"LicenseStatus");
+
+		if (wmi_res == SUCCESS) {
+			os_license = true;
+			stored_property = wmi_query_manager.getStoredProperty();
+
+			if (std::holds_alternative<int64_t>(stored_property)) {
+				switch (std::get<int64_t>(stored_property)) {
+				case 0:
+					operating_system_details.activation_status = ActivationStatus::UNLICENSED;
+					break;
+				case 1:
+					operating_system_details.activation_status = ActivationStatus::LICENSED;
+					break;
+				case 2:
+					operating_system_details.activation_status = ActivationStatus::OOB_GRACE;
+					break;
+				case 3:
+					operating_system_details.activation_status = ActivationStatus::OOT_GRACE;
+					break;
+				case 4:
+					operating_system_details.activation_status = ActivationStatus::NON_GENUINE_GRACE;
+					break;
+				case 5:
+					operating_system_details.activation_status = ActivationStatus::NOTIFICATION;
+					break;
+				case 6:
+					operating_system_details.activation_status = ActivationStatus::EXTENDED_GRACE;
+					break;
+				default:
+					operating_system_details.activation_status = ActivationStatus::UNAVAILABLE;
+					break;
+				}
+			}
+			else {
+				return ERROR_UNEXPECTED_VARIANT_TYPE;
+			}
+		}
+		else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+			operating_system_details.activation_status = ActivationStatus::UNAVAILABLE;
+			partial_data = true;
+			break;
+		}
+		else {
+			return wmi_res;
+		}
+
+	} while (wmi_query_manager.nextWMIObject() == SUCCESS && !os_license);
+
 	if (partial_data) {
 		return WARNING_WMI_PARTIAL_DATA;
 	}
