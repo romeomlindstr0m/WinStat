@@ -21,11 +21,13 @@
   <ItemGroup>
     <ClInclude Include="include\wsi\common.h" />
     <ClInclude Include="include\wsi\gpuapi.h" />
+    <ClInclude Include="include\wsi\memoryapi.h" />
     <ClInclude Include="include\wsi\systemapi.h" />
     <ClInclude Include="include\wsi\wmiapi.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\gpuapi.cpp" />
+    <ClCompile Include="src\memoryapi.cpp" />
     <ClCompile Include="src\systemapi.cpp" />
     <ClCompile Include="src\wmiapi.cpp" />
   </ItemGroup>
