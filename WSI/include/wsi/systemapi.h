@@ -14,13 +14,6 @@ WSI_API enum ActivationStatus {
 	UNAVAILABLE			// The system activation status is not available.
 };
 
-struct WSI_API ProcessorDetails {
-	std::wstring vendor;
-	int64_t architecture;
-	int64_t core_count;
-	int64_t thread_count;
-};
-
 struct WSI_API OperatingSystemDetails {
 	std::wstring caption;
 	std::wstring version;
@@ -38,7 +31,6 @@ struct WSI_API DiskDetails {
 	std::wstring status;
 };
 
-int WSI_API queryProcessorDetails(ProcessorDetails& processor_details);
 int WSI_API queryUserName(std::wstring& user_name);
 int WSI_API queryComputerName(std::wstring& computer_name);
 int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details);
