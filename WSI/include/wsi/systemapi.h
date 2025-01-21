@@ -3,6 +3,7 @@
 #include <vector>
 #include "common.h"
 
+// Represents the activation status of the operating system.
 WSI_API enum ActivationStatus {
 	UNLICENSED,         // The system is not activated; no valid license is installed.
 	LICENSED,           // The system is fully activated and licensed.
@@ -14,15 +15,19 @@ WSI_API enum ActivationStatus {
 	UNAVAILABLE			// The system activation status is not available.
 };
 
+// Represents detailed information about the operating system.
 struct WSI_API OperatingSystemDetails {
-	std::wstring caption;
-	std::wstring version;
-	std::wstring build_number;
-	std::wstring architecture;
-	std::wstring language;
-	ActivationStatus activation_status;
+	std::wstring caption;				// The name or caption of the operating system (e.g., "Windows 11 Pro").
+	std::wstring version;				// The version of the operating system (e.g., "10.0.22621").
+	std::wstring build_number;			// The build number of the operating system (e.g., "22621").
+	std::wstring architecture;			// The system architecture (e.g., "x64", "ARM").
+	std::wstring language;				// The default system language (e.g., "en-US").
+	ActivationStatus activation_status; // The activation status of the operating system.
 };
 
+// Retrieves the username of the currently logged-in user.
 int WSI_API queryUserName(std::wstring& user_name);
+// Retrieves the computer name of the system.
 int WSI_API queryComputerName(std::wstring& computer_name);
+// Queries detailed information about the operating system.
 int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details);
