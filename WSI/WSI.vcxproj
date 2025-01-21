@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\wsi\common.h" />
+    <ClInclude Include="include\wsi\diskapi.h" />
     <ClInclude Include="include\wsi\gpuapi.h" />
     <ClInclude Include="include\wsi\memoryapi.h" />
     <ClInclude Include="include\wsi\processapi.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="include\wsi\wmiapi.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\diskapi.cpp" />
     <ClCompile Include="src\gpuapi.cpp" />
     <ClCompile Include="src\memoryapi.cpp" />
     <ClCompile Include="src\processapi.cpp" />
