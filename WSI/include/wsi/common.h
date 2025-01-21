@@ -48,7 +48,9 @@ constexpr int ERROR_PROCESS_HANDLE_FAILED = 1150; // The system failed to create
 constexpr int ERROR_PROCESS_TERMINATION_FAILED = 1160; // The system failed to terminate the specified process.
 constexpr int ERROR_PROCESS_ID_NOT_VALID = 1170; // The process is not valid (the SYSTEM process cannot be terminated).
 constexpr int ERROR_PROCESS_FULL_PATH_FAILED = 1180; // The process full path could not be retrieved.
-
+constexpr int ERROR_PROCESS_PRIORITY_TYPE_UNKNOWN = 1190; // An unexpected process priority type was encountered.
+constexpr int ERROR_PROCESS_PRIORITY_CANNOT_BE_UNDEFINED = 1200; // The process priority cannot be set to UNDEFINED.
+constexpr int ERROR_PROCESS_PRIORITY_SET_FAILED = 1210; // The system failed to set the given priority.
 // Warning codes are defined within a range of 10000-20000.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
 constexpr int WARNING_WMI_PARTIAL_DATA = 10010; // A WMI query returned partial data, some properties may be missing.
