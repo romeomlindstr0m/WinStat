@@ -26,7 +26,7 @@ namespace {
 	}
 }
 
-int GetProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive) {
+int getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive) {
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 
 	if (snapshot == INVALID_HANDLE_VALUE) {
@@ -65,7 +65,32 @@ int GetProcessIdByName(std::wstring process_name, uint32_t& process_id, bool cas
 	return WARNING_PROCESS_NOT_FOUND;
 }
 
-int TerminateProcessById(uint32_t process_id) {
+int enumerateProcesses(std::unordered_map<uint32_t, std::wstring>& process_list) {
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+	if (snapshot == INVALID_HANDLE_VALUE) {
+		return ERROR_PROCESS_SNAPSHOT_FAILED;
+	}
+
+	PROCESSENTRY32W process_entry = { 0 };
+	process_entry.dwSize = sizeof(PROCESSENTRY32W);
+
+	if (Process32FirstW(snapshot, &process_entry) == FALSE) {
+		CloseHandle(snapshot);
+		return ERROR_PROCESS_FIRST_MISSING;
+	}
+
+	process_list.insert({ static_cast<uint32_t>(process_entry.th32ProcessID), process_entry.szExeFile });
+
+	do {
+		process_list.insert({ static_cast<uint32_t>(process_entry.th32ProcessID), process_entry.szExeFile });
+	} while (Process32NextW(snapshot, &process_entry) != FALSE);
+
+	CloseHandle(snapshot);
+	return SUCCESS;
+}
+
+int terminateProcessById(uint32_t process_id) {
 	if (!isValidProcessId(process_id)) {
 		return ERROR_PROCESS_ID_NOT_VALID;
 	}
@@ -85,15 +110,15 @@ int TerminateProcessById(uint32_t process_id) {
 	return SUCCESS;
 }
 
-int TerminateProcessByName(std::wstring process_name, bool case_sensitive) {
+int terminateProcessByName(std::wstring process_name, bool case_sensitive) {
 	uint32_t target_process_id = 0;
 	int res = SUCCESS;
 
-	res = GetProcessIdByName(process_name, target_process_id, case_sensitive);
+	res = getProcessIdByName(process_name, target_process_id, case_sensitive);
 
 	if (!IS_SUCCESS(res)) {
 		return res;
 	}
 
-	return TerminateProcessById(target_process_id);
+	return terminateProcessById(target_process_id);
 }
