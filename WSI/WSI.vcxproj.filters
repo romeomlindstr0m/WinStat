@@ -30,6 +30,9 @@
     <ClInclude Include="include\wsi\memoryapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\wsi\processapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wmiapi.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\memoryapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\processapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
