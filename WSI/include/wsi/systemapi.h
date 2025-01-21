@@ -23,15 +23,6 @@ struct WSI_API OperatingSystemDetails {
 	ActivationStatus activation_status;
 };
 
-struct WSI_API DiskDetails {
-	std::wstring model;
-	std::wstring serial_number;
-	std::wstring size;
-	std::wstring media_type;
-	std::wstring status;
-};
-
 int WSI_API queryUserName(std::wstring& user_name);
 int WSI_API queryComputerName(std::wstring& computer_name);
 int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details);
-int WSI_API queryDiskDetails(std::vector<DiskDetails>& disk_details);
