@@ -6,6 +6,7 @@
 
 int WSI_API getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive = true);
 int WSI_API enumerateProcesses(std::unordered_map<uint32_t, std::wstring>& process_list);
+int WSI_API getExecutablePath(uint32_t process_id, std::wstring& executable_path);
 
 int WSI_API terminateProcessById(uint32_t process_id);
 int WSI_API terminateProcessByName(std::wstring process_name, bool case_sensitive = true);

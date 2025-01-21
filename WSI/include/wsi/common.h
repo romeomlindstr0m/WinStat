@@ -46,7 +46,8 @@ constexpr int ERROR_PROCESS_SNAPSHOT_FAILED = 1130; // The system failed to crea
 constexpr int ERROR_PROCESS_FIRST_MISSING = 1140; // The first process entry is missing, this may indicate that the process list is empty.
 constexpr int ERROR_PROCESS_HANDLE_FAILED = 1150; // The system failed to create an handle to the specified process, this is usually because the calling application has insufficient permissions.
 constexpr int ERROR_PROCESS_TERMINATION_FAILED = 1160; // The system failed to terminate the specified process.
-constexpr int ERROR_PROCESS_ID_NOT_VALID = 1170; // The process is is not valid (the SYSTEM process cannot be terminated).
+constexpr int ERROR_PROCESS_ID_NOT_VALID = 1170; // The process is not valid (the SYSTEM process cannot be terminated).
+constexpr int ERROR_PROCESS_FULL_PATH_FAILED = 1180; // The process full path could not be retrieved.
 
 // Warning codes are defined within a range of 10000-20000.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.

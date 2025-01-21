@@ -1,5 +1,6 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
+#define _WIN32_WINNT 0x0600
 #include <Windows.h>
 #include <tlhelp32.h>
 #include <processthreadsapi.h>
@@ -87,6 +88,33 @@ int enumerateProcesses(std::unordered_map<uint32_t, std::wstring>& process_list)
 	} while (Process32NextW(snapshot, &process_entry) != FALSE);
 
 	CloseHandle(snapshot);
+	return SUCCESS;
+}
+
+int getExecutablePath(uint32_t process_id, std::wstring& executable_path) {
+	if (!isValidProcessId(process_id)) {
+		return ERROR_PROCESS_ID_NOT_VALID;
+	}
+
+	HANDLE target_handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_id);
+
+	if (target_handle == NULL) {
+		return ERROR_PROCESS_HANDLE_FAILED;
+	}
+
+	int process_path_sz = 8192;
+	wchar_t* process_path_buff = new wchar_t[process_path_sz];
+	DWORD process_path_buff_sz = process_path_sz;
+
+	if (QueryFullProcessImageNameW(target_handle, 0, process_path_buff, &process_path_buff_sz) == 0) {
+		CloseHandle(target_handle);
+		return ERROR_PROCESS_FULL_PATH_FAILED;
+	}
+
+	executable_path = std::wstring(process_path_buff);
+
+	delete[] process_path_buff;
+	CloseHandle(target_handle);
 	return SUCCESS;
 }
 
