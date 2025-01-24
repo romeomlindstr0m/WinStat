@@ -22,6 +22,7 @@
     <ClInclude Include="include\wsi\common.h" />
     <ClInclude Include="include\wsi\diskapi.h" />
     <ClInclude Include="include\wsi\gpuapi.h" />
+    <ClInclude Include="include\wsi\internal.h" />
     <ClInclude Include="include\wsi\memoryapi.h" />
     <ClInclude Include="include\wsi\processapi.h" />
     <ClInclude Include="include\wsi\processorapi.h" />
@@ -31,6 +32,7 @@
   <ItemGroup>
     <ClCompile Include="src\diskapi.cpp" />
     <ClCompile Include="src\gpuapi.cpp" />
+    <ClCompile Include="src\internal.cpp" />
     <ClCompile Include="src\memoryapi.cpp" />
     <ClCompile Include="src\processapi.cpp" />
     <ClCompile Include="src\processorapi.cpp" />
