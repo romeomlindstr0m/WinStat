@@ -51,6 +51,10 @@ constexpr int ERROR_PROCESS_FULL_PATH_FAILED = 1180; // The process full path co
 constexpr int ERROR_PROCESS_PRIORITY_TYPE_UNKNOWN = 1190; // An unexpected process priority type was encountered.
 constexpr int ERROR_PROCESS_PRIORITY_CANNOT_BE_UNDEFINED = 1200; // The process priority cannot be set to UNDEFINED.
 constexpr int ERROR_PROCESS_PRIORITY_SET_FAILED = 1210; // The system failed to set the given priority.
+
+constexpr int ERROR_INTERNAL_SID_INIT_FAILED = 1220; // Failed to initialize the SID for the Administrators group.
+constexpr int ERROR_INTERNAL_QUERY_TOKEN_FAILED = 1230; // Failed to query token membership for the Administrators group.
+
 // Warning codes are defined within a range of 10000-20000.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
 constexpr int WARNING_WMI_PARTIAL_DATA = 10010; // A WMI query returned partial data, some properties may be missing.

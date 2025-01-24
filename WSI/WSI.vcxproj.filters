@@ -36,6 +36,12 @@
     <ClInclude Include="include\wsi\processorapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\wsi\diskapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\wsi\internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\wmiapi.cpp">
@@ -54,6 +60,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\processorapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\diskapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\internal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
