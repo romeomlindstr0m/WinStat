@@ -36,7 +36,7 @@ int queryProcessorDetails(ProcessorDetails& processor_details) {
 
 	wmi_res = wmi_query_manager.queryWMIProperty(L"Architecture");
 
-	if (wmi_res != SUCCESS) {
+	if (wmi_res == SUCCESS) {
 		/*
 		The Architecture property is documented as uint16(VT_UI2),
 		But WMI returns the property as int32 (VT_I4).
