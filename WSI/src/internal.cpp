@@ -36,3 +36,19 @@ int isRunningAsAdmin(bool& has_elevated_privileges) {
 	FreeSid(administrator_group);
 	return SUCCESS;
 }
+
+bool isSystemUEFI() {
+	DWORD firmware_query_buffer = 0;
+	DWORD firmware_query_res = GetFirmwareEnvironmentVariableExW(
+		L"",
+		L"{00000000-0000-0000-0000-000000000000}",
+		&firmware_query_buffer,
+		sizeof(firmware_query_buffer),
+		NULL);
+
+	if (GetLastError() == ERROR_INVALID_FUNCTION) {
+		return false;
+	}
+
+	return true;
+}
