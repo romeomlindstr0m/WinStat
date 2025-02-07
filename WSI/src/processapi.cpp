@@ -5,6 +5,7 @@
 #include <tlhelp32.h>
 #include <processthreadsapi.h>
 #include "wsi/processapi.h"
+#include "wsi/internal.h"
 
 namespace {
 	bool isValidProcessId(uint32_t process_id) {
@@ -66,14 +67,14 @@ int getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool cas
 	return WARNING_PROCESS_NOT_FOUND;
 }
 
-int enumerateProcesses(std::unordered_map<uint32_t, std::wstring>& process_list) {
+int enumerateProcesses(std::vector<ProcessInfo>& process_list) {
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 
 	if (snapshot == INVALID_HANDLE_VALUE) {
 		return ERROR_PROCESS_SNAPSHOT_FAILED;
 	}
 
-	PROCESSENTRY32W process_entry = { 0 };
+	PROCESSENTRY32W process_entry;
 	process_entry.dwSize = sizeof(PROCESSENTRY32W);
 
 	if (Process32FirstW(snapshot, &process_entry) == FALSE) {
@@ -81,40 +82,40 @@ int enumerateProcesses(std::unordered_map<uint32_t, std::wstring>& process_list)
 		return ERROR_PROCESS_FIRST_MISSING;
 	}
 
-	process_list.insert({ static_cast<uint32_t>(process_entry.th32ProcessID), process_entry.szExeFile });
-
 	do {
-		process_list.insert({ static_cast<uint32_t>(process_entry.th32ProcessID), process_entry.szExeFile });
+		std::wstring process_name = std::wstring(process_entry.szExeFile);
+
+		if (!isProcessRestricted(process_entry.th32ProcessID, process_name)) {
+			ProcessInfo process_info;
+			process_info.id = static_cast<uint32_t>(process_entry.th32ProcessID);
+			process_info.parent_id = static_cast<uint32_t>(process_entry.th32ParentProcessID);
+			process_info.name = std::wstring(process_entry.szExeFile);
+
+			HANDLE process_handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID);
+
+			if (process_handle != NULL) {
+				DWORD process_path_buffer_sz = MAX_PATH;
+				WCHAR process_path_buffer[MAX_PATH];
+
+				if (QueryFullProcessImageNameW(process_handle, 0, process_path_buffer, &process_path_buffer_sz) != 0) {
+					process_info.executable_path = std::wstring(process_path_buffer);
+				}
+				else {
+					process_info.executable_path = L"";
+				}
+
+				CloseHandle(process_handle);
+			}
+			else {
+				process_info.executable_path = L"";
+			}
+
+			process_list.push_back(process_info);
+		}
+
 	} while (Process32NextW(snapshot, &process_entry) != FALSE);
-
+	
 	CloseHandle(snapshot);
-	return SUCCESS;
-}
-
-int getExecutablePath(uint32_t process_id, std::wstring& executable_path) {
-	if (!isValidProcessId(process_id)) {
-		return ERROR_PROCESS_ID_NOT_VALID;
-	}
-
-	HANDLE target_handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_id);
-
-	if (target_handle == NULL) {
-		return ERROR_PROCESS_HANDLE_FAILED;
-	}
-
-	int process_path_sz = 8192;
-	wchar_t* process_path_buff = new wchar_t[process_path_sz];
-	DWORD process_path_buff_sz = process_path_sz;
-
-	if (QueryFullProcessImageNameW(target_handle, 0, process_path_buff, &process_path_buff_sz) == 0) {
-		CloseHandle(target_handle);
-		return ERROR_PROCESS_FULL_PATH_FAILED;
-	}
-
-	executable_path = std::wstring(process_path_buff);
-
-	delete[] process_path_buff;
-	CloseHandle(target_handle);
 	return SUCCESS;
 }
 

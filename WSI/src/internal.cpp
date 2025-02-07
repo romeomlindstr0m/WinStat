@@ -1,6 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+#include <unordered_set>
 #include "wsi/internal.h"
 
 int isRunningAsAdmin(bool& has_elevated_privileges) {
@@ -51,4 +52,36 @@ bool isSystemUEFI() {
 	}
 
 	return true;
+}
+
+bool isProcessRestricted(uint32_t process_id, const std::wstring& process_name) {
+	static const std::unordered_set<uint32_t> restricted_pids = {
+		0, 4, 8, 12, 18
+	};
+
+	static const std::unordered_set<std::wstring> restricted_names = {
+		L"[System Process]",
+		L"Secure System",
+		L"System",
+		L"Registry",
+		L"Memory Compression",
+		L"smss.exe",
+		L"csrss.exe",
+		L"wininit.exe",
+		L"lsass.exe",
+		L"services.exe",
+		L"svchost.exe",
+		L"explorer.exe",
+		L"winlogon.exe",
+		L"taskmgr.exe",
+		L"LsaIso.exe",
+		L"MsMpEng.exe",
+		L"TrustedInstaller.exe",
+		L"WmiPrvSE"
+	};
+
+	if (restricted_pids.find(process_id) != restricted_pids.end()) { return true; }
+	if (restricted_names.find(process_name) != restricted_names.end()) { return true; }
+
+	return false;
 }
