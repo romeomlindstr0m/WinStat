@@ -26,6 +26,7 @@
     <ClInclude Include="include\wsi\memoryapi.h" />
     <ClInclude Include="include\wsi\processapi.h" />
     <ClInclude Include="include\wsi\processorapi.h" />
+    <ClInclude Include="include\wsi\securityapi.h" />
     <ClInclude Include="include\wsi\systemapi.h" />
     <ClInclude Include="include\wsi\wmiapi.h" />
   </ItemGroup>
@@ -36,6 +37,7 @@
     <ClCompile Include="src\memoryapi.cpp" />
     <ClCompile Include="src\processapi.cpp" />
     <ClCompile Include="src\processorapi.cpp" />
+    <ClCompile Include="src\securityapi.cpp" />
     <ClCompile Include="src\systemapi.cpp" />
     <ClCompile Include="src\wmiapi.cpp" />
   </ItemGroup>

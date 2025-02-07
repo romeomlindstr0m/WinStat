@@ -55,6 +55,14 @@ constexpr int ERROR_PROCESS_PRIORITY_SET_FAILED = 1210; // The system failed to 
 constexpr int ERROR_INTERNAL_SID_INIT_FAILED = 1220; // Failed to initialize the SID for the Administrators group.
 constexpr int ERROR_INTERNAL_QUERY_TOKEN_FAILED = 1230; // Failed to query token membership for the Administrators group.
 
+constexpr int ERROR_SECURITY_ELEVATION_REQUIRED = 1250; // The operation requires elevated privileges (admin rights).
+constexpr int ERROR_SECURITY_PROCESS_TOKEN_FAILED = 1260; // Failed to open or retrieve the process token.
+constexpr int ERROR_SECURITY_PRIVILEGE_LOOKUP_FAILED = 1270; // Failed to find the required system privilege.
+constexpr int ERROR_SECURITY_TOKEN_ADJUST_FAILED = 1280; // Failed to adjust required privileges in the process token.
+constexpr int ERROR_SECURITY_SECURE_BOOT_QUERY_FAILED = 1290; // Secure Boot state could not be retrieved from the firmware.
+constexpr int ERROR_SECURITY_TOKEN_READJUST_FAILED = 1300; // Failed to restore the process token to its original state after privilege adjustment.
+constexpr int ERROR_SECURITY_SYSTEM_NOT_UEFI = 1310; // The system is not using UEFI firmware (likely running in Legacy BIOS mode).
+
 // Warning codes are defined within a range of 10000-20000.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
 constexpr int WARNING_WMI_PARTIAL_DATA = 10010; // A WMI query returned partial data, some properties may be missing.
