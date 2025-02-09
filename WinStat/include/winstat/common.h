@@ -17,10 +17,10 @@ Usage:
 #define IS_SUCCESS(code) ((code) >= 0 && (code) <= 999)
 
 // Define preprocessor directive to export/import library components.
-#ifdef WSI_EXPORT
-#define WSI_API __declspec(dllexport)
+#ifdef WINSTAT_EXPORT
+#define WINSTAT_API __declspec(dllexport)
 #else
-#define WSI_API __declspec(dllimport)
+#define WINSTAT_API __declspec(dllimport)
 #endif
 
 // Success codes are defined within a range of 0-999.

@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "common.h"
+#include "winstat/common.h"
 
 // Represents the activation status of the operating system.
-WSI_API enum ActivationStatus {
+WINSTAT_API enum ActivationStatus {
 	UNLICENSED,         // The system is not activated; no valid license is installed.
 	LICENSED,           // The system is fully activated and licensed.
 	OOB_GRACE,          // Out-of-Box Grace: The system is within the initial grace period after installation but not yet activated.
@@ -16,7 +16,7 @@ WSI_API enum ActivationStatus {
 };
 
 // Represents detailed information about the operating system.
-struct WSI_API OperatingSystemDetails {
+struct WINSTAT_API OperatingSystemDetails {
 	std::wstring caption;				// The name or caption of the operating system (e.g., "Windows 11 Pro").
 	std::wstring version;				// The version of the operating system (e.g., "10.0.22621").
 	std::wstring build_number;			// The build number of the operating system (e.g., "22621").
@@ -26,8 +26,8 @@ struct WSI_API OperatingSystemDetails {
 };
 
 // Retrieves the username of the currently logged-in user.
-int WSI_API queryUserName(std::wstring& user_name);
+int WINSTAT_API queryUserName(std::wstring& user_name);
 // Retrieves the computer name of the system.
-int WSI_API queryComputerName(std::wstring& computer_name);
+int WINSTAT_API queryComputerName(std::wstring& computer_name);
 // Queries detailed information about the operating system.
-int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details);
+int WINSTAT_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details);

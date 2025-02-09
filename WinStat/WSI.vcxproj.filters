@@ -15,34 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\wsi\common.h">
+    <ClInclude Include="include\winstat\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\systemapi.h">
+    <ClInclude Include="include\winstat\systemapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\wmiapi.h">
+    <ClInclude Include="include\winstat\wmiapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\gpuapi.h">
+    <ClInclude Include="include\winstat\gpuapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\memoryapi.h">
+    <ClInclude Include="include\winstat\memoryapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\processapi.h">
+    <ClInclude Include="include\winstat\processapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\processorapi.h">
+    <ClInclude Include="include\winstat\processorapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\diskapi.h">
+    <ClInclude Include="include\winstat\diskapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\internal.h">
+    <ClInclude Include="include\winstat\internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\wsi\securityapi.h">
+    <ClInclude Include="include\winstat\securityapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

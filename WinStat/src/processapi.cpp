@@ -5,8 +5,8 @@
 #include <processthreadsapi.h>
 #include <algorithm>
 #include <cwctype>
-#include "wsi/processapi.h"
-#include "wsi/internal.h"
+#include "winstat/processapi.h"
+#include "winstat/internal.h"
 
 int getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive) {
 	std::vector<ProcessInfo> process_list;
@@ -43,7 +43,7 @@ int getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool cas
 	return WARNING_PROCESS_NOT_FOUND;
 }
 
-int WSI_API enumerateProcesses(std::vector<ProcessInfo>& process_list) {
+int WINSTAT_API enumerateProcesses(std::vector<ProcessInfo>& process_list) {
 	int enumeration_res = enumerateProcesses(process_list, false);
 
 	if (!IS_SUCCESS(enumeration_res)) {

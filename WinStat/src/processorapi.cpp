@@ -1,5 +1,5 @@
-#include "wsi/wmiapi.h"
-#include "wsi/processorapi.h"
+#include "winstat/wmiapi.h"
+#include "winstat/processorapi.h"
 
 int queryProcessorDetails(ProcessorDetails& processor_details) {
 	std::variant<std::wstring, int64_t, uint64_t, bool> stored_property;

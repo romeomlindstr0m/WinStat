@@ -1,7 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
-#include "wsi/memoryapi.h"
+#include "winstat/memoryapi.h"
 
 int queryMemoryDetails(MemoryDetails& memory_details) {
 	MEMORYSTATUSEX memory_status = { 0 };

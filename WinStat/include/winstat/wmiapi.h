@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include <variant>
-#include "common.h"
+#include "winstat/common.h"
 
-class WSI_API WMIQueryManager {
+class WINSTAT_API WMIQueryManager {
 public:
 	WMIQueryManager();
 	~WMIQueryManager();
