@@ -2,8 +2,8 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <lmcons.h>
-#include "wsi/systemapi.h"
-#include "wsi/wmiapi.h"
+#include "winstat/systemapi.h"
+#include "winstat/wmiapi.h"
 
 int queryUserName(std::wstring& user_name) {
 	wchar_t user_name_buffer[UNLEN + 1];
@@ -31,7 +31,7 @@ int queryComputerName(std::wstring& computer_name) {
 	return SUCCESS;
 }
 
-int WSI_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details) {
+int WINSTAT_API queryOperatingSystemDetails(OperatingSystemDetails& operating_system_details) {
 	std::variant<std::wstring, int64_t, uint64_t, bool> stored_property;
 	WMIQueryManager wmi_query_manager;
 	int wmi_res = SUCCESS;

@@ -5,7 +5,7 @@
 #include <tlhelp32.h>
 #include <algorithm>
 #include <cwctype>
-#include "wsi/internal.h"
+#include "winstat/internal.h"
 
 int isRunningAsAdmin(bool& has_elevated_privileges) {
 	BOOL is_member = FALSE;

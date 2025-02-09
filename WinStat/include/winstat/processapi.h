@@ -2,10 +2,10 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include "wsi/common.h"
+#include "winstat/common.h"
 
 // Represents the priority level of a process.
-WSI_API enum Priority {
+WINSTAT_API enum Priority {
     BACKGROUND_BEGIN = 0, // Set the process to background mode (low I/O and memory priority).
     BACKGROUND_END = 1,   // Restore the process from background mode to normal priority.
     REALTIME = 2,         // Highest priority level for time-critical tasks.
@@ -18,7 +18,7 @@ WSI_API enum Priority {
 };
 
 // This structure holds essential details about a running process, including its ID, parent process ID, name, and executable path.
-struct WSI_API ProcessInfo {
+struct WINSTAT_API ProcessInfo {
     uint32_t id;                    // Process ID.
     uint32_t parent_id;             // Parent Process ID.
     std::wstring name;              // Process name.
@@ -26,14 +26,14 @@ struct WSI_API ProcessInfo {
 };
 
 // Retrieves the process ID of a process by its name.
-int WSI_API getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive = true);
+int WINSTAT_API getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive = true);
 // Enumerates all running processes on the system.
-int WSI_API enumerateProcesses(std::vector<ProcessInfo>& process_list);
+int WINSTAT_API enumerateProcesses(std::vector<ProcessInfo>& process_list);
 // Terminates a process by its ID.
-int WSI_API terminateProcessById(uint32_t process_id);
+int WINSTAT_API terminateProcessById(uint32_t process_id);
 // Terminates a process by its name.
-int WSI_API terminateProcessByName(std::wstring process_name, bool case_sensitive = true);
+int WINSTAT_API terminateProcessByName(std::wstring process_name, bool case_sensitive = true);
 // Retrieves the priority level of a process by its ID.
-int WSI_API getProcessPriority(uint32_t process_id, Priority& process_priority);
+int WINSTAT_API getProcessPriority(uint32_t process_id, Priority& process_priority);
 // Sets the priority level of a process by its ID.
-int WSI_API setProcessPriority(uint32_t process_id, Priority& process_priority);
+int WINSTAT_API setProcessPriority(uint32_t process_id, Priority& process_priority);

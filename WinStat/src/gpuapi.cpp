@@ -1,5 +1,5 @@
-#include "wsi/gpuapi.h"
-#include "wsi/wmiapi.h"
+#include "winstat/gpuapi.h"
+#include "winstat/wmiapi.h"
 
 int queryGPUDetails(std::vector<GPUDetails>& gpu_details) {
 	int wmi_res = SUCCESS;

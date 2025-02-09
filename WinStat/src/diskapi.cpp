@@ -1,5 +1,5 @@
-#include "wsi/diskapi.h"
-#include "wsi/wmiapi.h"
+#include "winstat/diskapi.h"
+#include "winstat/wmiapi.h"
 
 int queryDiskDetails(std::vector<DiskDetails>& disk_details) {
 	std::variant<std::wstring, int64_t, uint64_t, bool> stored_property;

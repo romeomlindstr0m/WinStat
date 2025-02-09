@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <comutil.h>
 #include <cstdint>
-#include "wsi/wmiapi.h"
+#include "winstat/wmiapi.h"
 
 class WMIQueryManager::WMIManager {
 public:

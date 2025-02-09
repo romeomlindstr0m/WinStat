@@ -4,8 +4,8 @@
 #include <processthreadsapi.h>
 #include <wchar.h>
 #include <string>
-#include "wsi/securityapi.h"
-#include "wsi/internal.h"
+#include "winstat/securityapi.h"
+#include "winstat/internal.h"
 
 int querySecureBootState(bool& state) {
 	bool elevated_privileges = false;

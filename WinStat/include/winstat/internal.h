@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "wsi/common.h"
-#include "wsi/processapi.h"
+#include "winstat/common.h"
+#include "winstat/processapi.h"
 
 // Checks if the current process is running with administrator privileges, this function is for internal use only and should not be called.
 int isRunningAsAdmin(bool& has_elevated_privileges);
