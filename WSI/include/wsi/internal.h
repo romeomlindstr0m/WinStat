@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <string>
 #include "wsi/common.h"
+#include "wsi/processapi.h"
 
 // Checks if the current process is running with administrator privileges, this function is for internal use only and should not be called.
 int isRunningAsAdmin(bool& has_elevated_privileges);
@@ -9,3 +10,5 @@ int isRunningAsAdmin(bool& has_elevated_privileges);
 bool isSystemUEFI();
 
 bool isProcessRestricted(uint32_t process_id, const std::wstring& process_name);
+
+int enumerateProcesses(std::vector<ProcessInfo>& process_list, bool enumerate_restricted = false);

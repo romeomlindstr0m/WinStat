@@ -1,4 +1,5 @@
 #pragma once
+#define _WIN32_WINNT _WIN32_WINNT_WIN10
 
 /*
 common.h
@@ -46,7 +47,7 @@ constexpr int ERROR_PROCESS_SNAPSHOT_FAILED = 1130; // The system failed to crea
 constexpr int ERROR_PROCESS_FIRST_MISSING = 1140; // The first process entry is missing, this may indicate that the process list is empty.
 constexpr int ERROR_PROCESS_HANDLE_FAILED = 1150; // The system failed to create an handle to the specified process, this is usually because the calling application has insufficient permissions.
 constexpr int ERROR_PROCESS_TERMINATION_FAILED = 1160; // The system failed to terminate the specified process.
-constexpr int ERROR_PROCESS_ID_NOT_VALID = 1170; // The process is not valid (the SYSTEM process cannot be terminated).
+constexpr int ERROR_PROCESS_RESTRICTED = 1170; // Process is restricted and cannot be enumerated or modified.
 constexpr int ERROR_PROCESS_FULL_PATH_FAILED = 1180; // The process full path could not be retrieved.
 constexpr int ERROR_PROCESS_PRIORITY_TYPE_UNKNOWN = 1190; // An unexpected process priority type was encountered.
 constexpr int ERROR_PROCESS_PRIORITY_CANNOT_BE_UNDEFINED = 1200; // The process priority cannot be set to UNDEFINED.

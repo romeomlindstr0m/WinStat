@@ -1,127 +1,75 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#define _WIN32_WINNT 0x0600
 #include <Windows.h>
 #include <tlhelp32.h>
 #include <processthreadsapi.h>
+#include <algorithm>
+#include <cwctype>
 #include "wsi/processapi.h"
 #include "wsi/internal.h"
 
-namespace {
-	bool isValidProcessId(uint32_t process_id) {
-		// The SYSTEM process cannot be terminated.
-		if (process_id == 4) {
-			return false;
-		}
-
-		HANDLE validation_handle = OpenProcess(
-			PROCESS_QUERY_INFORMATION,
-			FALSE,
-			static_cast<DWORD>(process_id));
-
-		if (validation_handle == NULL) {
-			return false;
-		}
-
-		CloseHandle(validation_handle);
-		return true;
-	}
-}
-
 int getProcessIdByName(std::wstring process_name, uint32_t& process_id, bool case_sensitive) {
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	std::vector<ProcessInfo> process_list;
+	int enumeration_res = enumerateProcesses(process_list, true);
 
-	if (snapshot == INVALID_HANDLE_VALUE) {
-		return ERROR_PROCESS_SNAPSHOT_FAILED;
+	if (!IS_SUCCESS(enumeration_res)) {
+		return enumeration_res;
 	}
 
-	PROCESSENTRY32W process_entry = { 0 };
-	process_entry.dwSize = sizeof(PROCESSENTRY32W);
-
-	if (Process32FirstW(snapshot, &process_entry) == FALSE) {
-		CloseHandle(snapshot);
-		return ERROR_PROCESS_FIRST_MISSING;
-	}
-
-	const wchar_t* process_name_buffer = process_name.c_str();
-
-	do {
-		if (case_sensitive) {
-			if (wcscmp(process_entry.szExeFile, process_name_buffer) == 0) {
-				process_id = process_entry.th32ProcessID;
-				CloseHandle(snapshot);
+	if (case_sensitive) {
+		for (ProcessInfo& process : process_list) {
+			if (process_name == process.name) {
+				if (isProcessRestricted(process.id, process.name)) {
+					return ERROR_PROCESS_RESTRICTED;
+				}
+				process_id = process.id;
 				return SUCCESS;
 			}
 		}
-		else {
-			if (_wcsicmp(process_entry.szExeFile, process_name_buffer) == 0) {
-				process_id = process_entry.th32ProcessID;
-				CloseHandle(snapshot);
+	}
+	else {
+		for (ProcessInfo& process : process_list) {
+			std::transform(process.name.begin(), process.name.end(), process.name.begin(), std::tolower);
+			if (process.name == process_name) {
+				if (isProcessRestricted(process.id, process.name)) {
+					return ERROR_PROCESS_RESTRICTED;
+				}
+				process_id = process.id;
 				return SUCCESS;
 			}
 		}
+	}
 
-	} while (Process32NextW(snapshot, &process_entry) != FALSE);
-
-	CloseHandle(snapshot);
 	return WARNING_PROCESS_NOT_FOUND;
 }
 
-int enumerateProcesses(std::vector<ProcessInfo>& process_list) {
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+int WSI_API enumerateProcesses(std::vector<ProcessInfo>& process_list) {
+	int enumeration_res = enumerateProcesses(process_list, false);
 
-	if (snapshot == INVALID_HANDLE_VALUE) {
-		return ERROR_PROCESS_SNAPSHOT_FAILED;
+	if (!IS_SUCCESS(enumeration_res)) {
+		return enumeration_res;
 	}
 
-	PROCESSENTRY32W process_entry;
-	process_entry.dwSize = sizeof(PROCESSENTRY32W);
-
-	if (Process32FirstW(snapshot, &process_entry) == FALSE) {
-		CloseHandle(snapshot);
-		return ERROR_PROCESS_FIRST_MISSING;
-	}
-
-	do {
-		std::wstring process_name = std::wstring(process_entry.szExeFile);
-
-		if (!isProcessRestricted(process_entry.th32ProcessID, process_name)) {
-			ProcessInfo process_info;
-			process_info.id = static_cast<uint32_t>(process_entry.th32ProcessID);
-			process_info.parent_id = static_cast<uint32_t>(process_entry.th32ParentProcessID);
-			process_info.name = std::wstring(process_entry.szExeFile);
-
-			HANDLE process_handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, process_entry.th32ProcessID);
-
-			if (process_handle != NULL) {
-				DWORD process_path_buffer_sz = MAX_PATH;
-				WCHAR process_path_buffer[MAX_PATH];
-
-				if (QueryFullProcessImageNameW(process_handle, 0, process_path_buffer, &process_path_buffer_sz) != 0) {
-					process_info.executable_path = std::wstring(process_path_buffer);
-				}
-				else {
-					process_info.executable_path = L"";
-				}
-
-				CloseHandle(process_handle);
-			}
-			else {
-				process_info.executable_path = L"";
-			}
-
-			process_list.push_back(process_info);
-		}
-
-	} while (Process32NextW(snapshot, &process_entry) != FALSE);
-	
-	CloseHandle(snapshot);
 	return SUCCESS;
 }
 
 int terminateProcessById(uint32_t process_id) {
-	if (!isValidProcessId(process_id)) {
-		return ERROR_PROCESS_ID_NOT_VALID;
+	std::vector<ProcessInfo> process_list;
+	int enumeration_res = enumerateProcesses(process_list, true);
+
+	if (!IS_SUCCESS(enumeration_res)) {
+		return enumeration_res;
+	}
+
+	for (ProcessInfo& process : process_list) {
+		if (process.id == process_id) {
+			if (isProcessRestricted(process.id, process.name)) {
+				return ERROR_PROCESS_RESTRICTED;
+			}
+			else {
+				break;
+			}
+		}
 	}
 
 	HANDLE process_handle = OpenProcess(PROCESS_TERMINATE, FALSE, static_cast<DWORD>(process_id));
@@ -153,8 +101,22 @@ int terminateProcessByName(std::wstring process_name, bool case_sensitive) {
 }
 
 int getProcessPriority(uint32_t process_id, Priority& process_priority) {
-	if (!isValidProcessId(process_id)) {
-		return process_id;
+	std::vector<ProcessInfo> process_list;
+	int enumeration_res = enumerateProcesses(process_list, true);
+
+	if (!IS_SUCCESS(enumeration_res)) {
+		return enumeration_res;
+	}
+
+	for (ProcessInfo& process : process_list) {
+		if (process.id == process_id) {
+			if (isProcessRestricted(process.id, process.name)) {
+				return ERROR_PROCESS_RESTRICTED;
+			}
+			else {
+				break;
+			}
+		}
 	}
 
 	HANDLE process_handle = OpenProcess(
@@ -197,8 +159,22 @@ int getProcessPriority(uint32_t process_id, Priority& process_priority) {
 }
 
 int setProcessPriority(uint32_t process_id, Priority& process_priority) {
-	if (!isValidProcessId(process_id)) {
-		return ERROR_PROCESS_ID_NOT_VALID;
+	std::vector<ProcessInfo> process_list;
+	int enumeration_res = enumerateProcesses(process_list, true);
+
+	if (!IS_SUCCESS(enumeration_res)) {
+		return enumeration_res;
+	}
+
+	for (ProcessInfo& process : process_list) {
+		if (process.id == process_id) {
+			if (isProcessRestricted(process.id, process.name)) {
+				return ERROR_PROCESS_RESTRICTED;
+			}
+			else {
+				break;
+			}
+		}
 	}
 
 	if (process_priority == Priority::UNDEFINED) {
