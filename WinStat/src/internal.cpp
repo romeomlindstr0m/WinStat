@@ -22,7 +22,7 @@ int isRunningAsAdmin(bool& has_elevated_privileges) {
 		&administrator_group);
 
 	if (SID_init == 0) {
-		return ERROR_INTERNAL_SID_INIT_FAILED;
+		return ERROR_SID_INIT_FAILED;
 	}
 
 	BOOL query_token_membership = CheckTokenMembership(
@@ -32,7 +32,7 @@ int isRunningAsAdmin(bool& has_elevated_privileges) {
 
 	if (query_token_membership == 0) {
 		FreeSid(administrator_group);
-		return ERROR_INTERNAL_QUERY_TOKEN_FAILED;
+		return ERROR_TOKEN_QUERY_FAILED;
 	}
 
 	has_elevated_privileges = is_member;
@@ -142,4 +142,106 @@ int enumerateProcesses(std::vector<ProcessInfo>& process_list, bool enumerate_re
 
 	CloseHandle(snapshot);
 	return SUCCESS;
+}
+
+class PrivilegeManager::PrivilegeManagerImpl {
+public:
+	PrivilegeManagerImpl() {
+		process_token_ = INVALID_HANDLE_VALUE;
+		process_token_active_ = false;
+	}
+
+	~PrivilegeManagerImpl() {
+		if (process_token_active_) {
+			CloseHandle(process_token_);
+			process_token_ = INVALID_HANDLE_VALUE;
+		}
+	}
+
+	int enablePrivilege(const std::wstring& privilege_name) {
+		bool elevated_privileges = false;
+		int privilege_res = isRunningAsAdmin(elevated_privileges);
+
+		if (!IS_SUCCESS(privilege_res)) {
+			return privilege_res;
+		}
+
+		if (!elevated_privileges) {
+			return ERROR_SECURITY_ELEVATION_REQUIRED;
+		}
+
+		BOOL token_res = OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &process_token_);
+
+		if (token_res == 0 && GetLastError() == ERROR_NOT_ALL_ASSIGNED) {
+			return ERROR_TOKEN_ACCESS_FAILED;
+		}
+
+		process_token_active_ = true;
+
+		LUID privilege_luid;
+		BOOL privilege_query_res = LookupPrivilegeValueW(
+			NULL,
+			privilege_name.c_str(),
+			&privilege_luid);
+
+		if (privilege_query_res == 0) {
+			return ERROR_PRIVILEGE_LOOKUP_FAILED;
+		}
+
+		TOKEN_PRIVILEGES token_privileges;
+		token_privileges.PrivilegeCount = 1;
+		token_privileges.Privileges[0].Luid = privilege_luid;
+		token_privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+		DWORD prev_token_privileges_sz = sizeof(prev_token_privileges_);
+
+		BOOL token_adjust_res = AdjustTokenPrivileges(
+			process_token_,
+			FALSE,
+			&token_privileges,
+			sizeof(prev_token_privileges_),
+			&prev_token_privileges_,
+			&prev_token_privileges_sz);
+
+		if (token_adjust_res == 0) {
+			return ERROR_SECURITY_PRIVILEGE_ADJUST_FAILED;
+		}
+
+		return SUCCESS;
+	}
+
+	int revert() {
+		BOOL token_adjust_reset_res = AdjustTokenPrivileges(
+			process_token_,
+			FALSE,
+			&prev_token_privileges_,
+			NULL, NULL, NULL);
+
+		if (token_adjust_reset_res == 0 && GetLastError() == ERROR_NOT_ALL_ASSIGNED) {
+			return ERROR_TOKEN_READJUST_FAILED;
+		}
+
+		return SUCCESS;
+	}
+
+private:
+	TOKEN_PRIVILEGES prev_token_privileges_;
+	HANDLE process_token_;
+	bool process_token_active_;
+};
+
+PrivilegeManager::PrivilegeManager() {
+	impl_ = new PrivilegeManagerImpl;
+}
+
+PrivilegeManager::~PrivilegeManager() {
+	delete impl_;
+}
+
+int PrivilegeManager::enablePrivilege(const std::wstring& privilege_name) {
+	return impl_->enablePrivilege(privilege_name);
+}
+
+int PrivilegeManager::revert() {
+	return impl_->revert();
 }
