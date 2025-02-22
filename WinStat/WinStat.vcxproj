@@ -24,6 +24,7 @@
     <ClInclude Include="include\winstat\gpuapi.h" />
     <ClInclude Include="include\winstat\internal.h" />
     <ClInclude Include="include\winstat\memoryapi.h" />
+    <ClInclude Include="include\winstat\powerapi.h" />
     <ClInclude Include="include\winstat\processapi.h" />
     <ClInclude Include="include\winstat\processorapi.h" />
     <ClInclude Include="include\winstat\securityapi.h" />
@@ -35,6 +36,7 @@
     <ClCompile Include="src\gpuapi.cpp" />
     <ClCompile Include="src\internal.cpp" />
     <ClCompile Include="src\memoryapi.cpp" />
+    <ClCompile Include="src\powerapi.cpp" />
     <ClCompile Include="src\processapi.cpp" />
     <ClCompile Include="src\processorapi.cpp" />
     <ClCompile Include="src\securityapi.cpp" />
