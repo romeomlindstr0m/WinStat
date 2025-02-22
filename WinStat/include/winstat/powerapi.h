@@ -18,3 +18,5 @@ struct WINSTAT_API BatteryStatus {
 int WINSTAT_API getBatteryStatus(BatteryStatus& battery_status);
 // Shuts down or restarts the system (requires elevated privileges).
 int WINSTAT_API shutdownSystem(bool restart = false);
+// Logs out the current user and ends their session.
+int WINSTAT_API logoffSystem();
