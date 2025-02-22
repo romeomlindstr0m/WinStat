@@ -58,3 +58,14 @@ int shutdownSystem(bool restart) {
 
 	return SUCCESS;
 }
+
+int logoffSystem() {
+	BOOL logoff_res = ExitWindowsEx(
+		EWX_LOGOFF | EWX_FORCEIFHUNG, 0);
+
+	if (logoff_res == 0) {
+		return ERROR_USER_SESSION_LOGOFF_FAILED;
+	}
+
+	return SUCCESS;
+}

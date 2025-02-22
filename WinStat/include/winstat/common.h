@@ -77,6 +77,7 @@ constexpr int ERROR_BATTERY_STATUS_FAILED = 1370; // Failed to retrieve battery 
 
 constexpr int ERROR_SYSTEM_SHUTDOWN_FAILED = 1380; // Failed to initiate system shutdown.
 constexpr int ERROR_SYSTEM_SHUTDOWN_IN_PROGRESS = 1390; // A system shutdown has already been initiated.
+constexpr int ERROR_USER_SESSION_LOGOFF_FAILED = 1400;
 
 // Warning codes are defined within a range of 10000-19999.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
