@@ -79,6 +79,8 @@ constexpr int ERROR_SYSTEM_SHUTDOWN_FAILED = 1380; // Failed to initiate system 
 constexpr int ERROR_SYSTEM_SHUTDOWN_IN_PROGRESS = 1390; // A system shutdown has already been initiated.
 constexpr int ERROR_USER_SESSION_LOGOFF_FAILED = 1400;
 
+constexpr int ERROR_TIME_VALUE_INVALID = 1410; // The time parameter was set to an unsupported value.
+
 // Warning codes are defined within a range of 10000-19999.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
 constexpr int WARNING_WMI_PARTIAL_DATA = 10010; // A WMI query returned partial data, some properties may be missing.
