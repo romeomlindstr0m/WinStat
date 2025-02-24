@@ -29,6 +29,7 @@
     <ClInclude Include="include\winstat\processorapi.h" />
     <ClInclude Include="include\winstat\securityapi.h" />
     <ClInclude Include="include\winstat\systemapi.h" />
+    <ClInclude Include="include\winstat\timeapi.h" />
     <ClInclude Include="include\winstat\wmiapi.h" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,7 @@
     <ClCompile Include="src\processorapi.cpp" />
     <ClCompile Include="src\securityapi.cpp" />
     <ClCompile Include="src\systemapi.cpp" />
+    <ClCompile Include="src\timeapi.cpp" />
     <ClCompile Include="src\wmiapi.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
