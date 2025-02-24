@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\winstat\common.h" />
     <ClInclude Include="include\winstat\diskapi.h" />
+    <ClInclude Include="include\winstat\fsapi.h" />
     <ClInclude Include="include\winstat\gpuapi.h" />
     <ClInclude Include="include\winstat\internal.h" />
     <ClInclude Include="include\winstat\memoryapi.h" />
@@ -34,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\diskapi.cpp" />
+    <ClCompile Include="src\fsapi.cpp" />
     <ClCompile Include="src\gpuapi.cpp" />
     <ClCompile Include="src\internal.cpp" />
     <ClCompile Include="src\memoryapi.cpp" />

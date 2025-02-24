@@ -80,6 +80,14 @@ constexpr int ERROR_SYSTEM_SHUTDOWN_IN_PROGRESS = 1390; // A system shutdown has
 constexpr int ERROR_USER_SESSION_LOGOFF_FAILED = 1400;
 
 constexpr int ERROR_TIME_VALUE_INVALID = 1410; // The time parameter was set to an unsupported value.
+constexpr int ERROR_FILE_NONEXISTENT = 1420;
+constexpr int ERROR_FILE_GENERIC_ERROR = 1430;
+
+constexpr int ERROR_FILE_WRITE_FAILED = 1440;
+constexpr int ERROR_FILE_READ_FAILED = 1450;
+constexpr int ERROR_FILE_READONLY = 1460;
+
+constexpr int ERROR_FILE_SIZE_READ_FAILED = 1450;
 
 // Warning codes are defined within a range of 10000-19999.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
