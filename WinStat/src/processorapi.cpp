@@ -8,7 +8,7 @@ int queryProcessorDetails(ProcessorDetails& processor_details) {
 
 	bool partial_data = false;
 
-	wmi_res = wmi_query_manager.setWMIClass(L"SELECT Manufacturer, Architecture, NumberOfCores, ThreadCount FROM Win32_Processor");
+	wmi_res = wmi_query_manager.setWMIClass(L"SELECT Manufacturer, Architecture, NumberOfCores, ThreadCount, SerialNumber FROM Win32_Processor");
 
 	if (wmi_res != SUCCESS) {
 		return wmi_res;
@@ -100,6 +100,31 @@ int queryProcessorDetails(ProcessorDetails& processor_details) {
 	}
 	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
 		processor_details.thread_count = 0;
+		partial_data = true;
+	}
+	else {
+		return wmi_res;
+	}
+
+	wmi_res = wmi_query_manager.queryWMIProperty(L"SerialNumber");
+
+	if (wmi_res == SUCCESS) {
+		stored_property = wmi_query_manager.getStoredProperty();
+
+		if (std::holds_alternative<std::wstring>(stored_property)) {
+			if (std::get<std::wstring>(stored_property) != L"To Be Filled By O.E.M.") {
+				processor_details.serial_number = std::get<std::wstring>(stored_property);
+			}
+			else {
+				processor_details.serial_number = L"N/A";
+			}
+		}
+		else {
+			return ERROR_UNEXPECTED_VARIANT_TYPE;
+		}
+	}
+	else if (wmi_res == WARNING_WMI_PARTIAL_DATA) {
+		processor_details.serial_number = L"";
 		partial_data = true;
 	}
 	else {
