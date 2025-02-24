@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <vector>
 #include "winstat/fsapi.h"
+#include "winstat/typecastapi.h"
 
 class fsapi::File::FileImpl {
 public:
@@ -66,7 +67,15 @@ public:
 			return ERROR_FILE_READ_FAILED;
 		}
 
-		buffer = std::wstring(reinterpret_cast<wchar_t*>(read_buffer.data()), bytes_read / sizeof(wchar_t));
+		std::string utf8_string(read_buffer.begin(), read_buffer.end());
+		std::wstring utf16_buffer = L"";
+		int conversion_result = typecastapi::utf8ToUtf16(utf8_string, utf16_buffer);
+
+		if (!IS_SUCCESS(conversion_result)) {
+			return conversion_result;
+		}
+
+		buffer = utf16_buffer;
 		return SUCCESS;
 	}
 
