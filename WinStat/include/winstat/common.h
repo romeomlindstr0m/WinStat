@@ -90,7 +90,9 @@ constexpr int ERROR_FILE_READONLY = 1460;
 constexpr int ERROR_FILE_SIZE_READ_FAILED = 1450;
 constexpr int ERROR_UTF8_BUFFER_FAILED = 1460;
 constexpr int ERROR_INVALID_CHARACTER_ENCOUNTERED = 1470;
+
 constexpr int ERROR_CONVERSION_FAILED = 1480;
+constexpr int ERROR_UTF16_BUFFER_FAILED = 1490;
 
 // Warning codes are defined within a range of 10000-19999.
 constexpr int WARNING_WMI_CLASS_NOT_SET = 10000; // WMI class not set.
