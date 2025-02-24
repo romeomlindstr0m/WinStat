@@ -26,10 +26,17 @@ public:
 			}
 		}
 
+		std::string utf8_buffer = "";
+		int conversion_result = typecastapi::utf16ToUtf8(buffer, utf8_buffer);
+
+		if (!IS_SUCCESS(conversion_result)) {
+			return conversion_result;
+		}
+
 		BOOL write_result = WriteFile(
 			file_handle_,
-			buffer.c_str(),
-			static_cast<DWORD>(buffer.size() * sizeof(wchar_t)),
+			utf8_buffer.c_str(),
+			static_cast<DWORD>(utf8_buffer.size()),
 			NULL, NULL);
 
 		if (write_result == FALSE) {
