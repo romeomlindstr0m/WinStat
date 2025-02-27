@@ -12,35 +12,38 @@ std::wstring stringapi::trim(const std::wstring& string, stringapi::TrimMode tri
 
 	switch (trim_mode) {
 	case stringapi::TrimMode::LEFT:
-		for (int i = 0; i < string_buffer.length(); i++) {
-			if (string_buffer[i] == L' ') {
-				string_buffer.erase(string_buffer.begin() + string_buffer[i]);
-			}
-			else { break; }
-		}
-		break;
-	case stringapi::TrimMode::RIGHT:
-		for (int i = string_buffer.length(); i >= 0; i--) {
-			if (string_buffer[i] == L' ') {
-				string_buffer.erase(string_buffer.begin() + string_buffer[i]);
-			}
-			else { break; }
-		}
-		break;
-	case stringapi::TrimMode::BOTH:
-		for (int i = 0; i < string_buffer.length(); i++) {
-			if (string_buffer[i] == L' ') {
-				string_buffer.erase(string_buffer.begin() + string_buffer[i]);
+		while (string_buffer.length() != 0) {
+			if (string_buffer[0] == L' ') {
+				string_buffer.erase(string_buffer.begin());
 			}
 			else { break; }
 		}
 
-		for (int i = string_buffer.length(); i >= 0; i--) {
-			if (string_buffer[i] == L' ') {
-				string_buffer.erase(string_buffer.begin() + string_buffer[i]);
+		break;
+	case stringapi::TrimMode::RIGHT:
+		while (string_buffer.length() != 0) {
+			if (string_buffer[string_buffer.length() - 1] == L' ') {
+				string_buffer.erase(string_buffer.end() - 1);
 			}
 			else { break; }
 		}
+
+		break;
+	case stringapi::TrimMode::BOTH:
+		while (string_buffer.length() != 0) {
+			if (string_buffer[0] == L' ') {
+				string_buffer.erase(string_buffer.begin());
+			}
+			else { break; }
+		}
+
+		while (string_buffer.length() != 0) {
+			if (string_buffer[string_buffer.length() - 1] == L' ') {
+				string_buffer.erase(string_buffer.end() - 1);
+			}
+			else { break; }
+		}
+
 		break;
 	default:
 		throw std::invalid_argument("Invalid TrimMode value.");
