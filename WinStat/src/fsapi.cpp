@@ -155,7 +155,7 @@ private:
 		file_handle_ = CreateFileW(
 			file_path_.c_str(),
 			GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ,
+			FILE_SHARE_READ | FILE_SHARE_DELETE,
 			NULL,
 			OPEN_EXISTING,
 			FILE_ATTRIBUTE_NORMAL,
