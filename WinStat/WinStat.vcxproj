@@ -29,6 +29,7 @@
     <ClInclude Include="include\winstat\processapi.h" />
     <ClInclude Include="include\winstat\processorapi.h" />
     <ClInclude Include="include\winstat\securityapi.h" />
+    <ClInclude Include="include\winstat\stringapi.h" />
     <ClInclude Include="include\winstat\systemapi.h" />
     <ClInclude Include="include\winstat\timeapi.h" />
     <ClInclude Include="include\winstat\typecastapi.h" />
@@ -44,6 +45,7 @@
     <ClCompile Include="src\processapi.cpp" />
     <ClCompile Include="src\processorapi.cpp" />
     <ClCompile Include="src\securityapi.cpp" />
+    <ClCompile Include="src\stringapi.cpp" />
     <ClCompile Include="src\systemapi.cpp" />
     <ClCompile Include="src\timeapi.cpp" />
     <ClCompile Include="src\typecastapi.cpp" />
