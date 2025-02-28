@@ -76,3 +76,27 @@ std::wstring stringapi::transformCase(const std::wstring& string, stringapi::Cas
 	delete[] string_buffer;
 	return result;
 }
+
+bool stringapi::startsWith(const std::wstring& string, const std::wstring& prefix) {
+	if (prefix.length() > string.length()) { return false; }
+	if (string.empty() && !prefix.empty()) { return false; }
+	if (string.empty() && prefix.empty()) { return true; }
+
+	for (int i = 0; i < prefix.length(); i++) {
+		if (prefix[i] != string[i]) { return false; }
+	}
+
+	return true;
+}
+
+bool stringapi::endsWith(const std::wstring& string, const std::wstring& suffix) {
+	if (suffix.length() > string.length()) { return false; }
+	if (string.empty() && !suffix.empty()) { return false; }
+	if (string.empty() && suffix.empty()) { return true; }
+
+	for (int i = suffix.length() - 1; i >= 0; i--) {
+		if (suffix[i] != string[i]) { return false; }
+	}
+
+	return true;
+}
