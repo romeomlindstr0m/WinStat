@@ -94,8 +94,9 @@ bool stringapi::endsWith(const std::wstring& string, const std::wstring& suffix)
 	if (string.empty() && !suffix.empty()) { return false; }
 	if (string.empty() && suffix.empty()) { return true; }
 
+	int index_offset = string.length() - suffix.length();
 	for (int i = suffix.length() - 1; i >= 0; i--) {
-		if (suffix[i] != string[i]) { return false; }
+		if (suffix[i] != string[index_offset + i]) { return false; }
 	}
 
 	return true;
